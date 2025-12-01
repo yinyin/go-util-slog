@@ -19,11 +19,11 @@ func WarnContext(ctx context.Context, msg string, err error, attrs ...slog.Attr)
 		return
 	}
 	var pcs [1]uintptr
-	runtime.Callers(2, pcs[:]) // skip [Callers, Infof]
+	runtime.Callers(2, pcs[:]) // skip [Callers, WarnContext]
 	r := slog.NewRecord(time.Now(), slog.LevelWarn, msg, pcs[0])
 	attrs = append(attrs, slog.Any("error", err))
 	if len(attrs) > 0 {
 		r.AddAttrs(attrs...)
 	}
-	_ = logger.Handler().Handle(context.Background(), r)
+	_ = logger.Handler().Handle(ctx, r)
 }

@@ -19,7 +19,7 @@ func FatalContext(ctx context.Context, msg string, err error, attrs ...slog.Attr
 		return
 	}
 	var pcs [1]uintptr
-	runtime.Callers(2, pcs[:]) // skip [Callers, Infof]
+	runtime.Callers(2, pcs[:]) // skip [Callers, FatalContext]
 	r := slog.NewRecord(time.Now(), slog.LevelError, msg, pcs[0])
 	if err != nil {
 		attrs = append(attrs, slog.Any("error", err))
@@ -27,6 +27,6 @@ func FatalContext(ctx context.Context, msg string, err error, attrs ...slog.Attr
 	if len(attrs) > 0 {
 		r.AddAttrs(attrs...)
 	}
-	_ = logger.Handler().Handle(context.Background(), r)
+	_ = logger.Handler().Handle(ctx, r)
 	os.Exit(1)
 }
